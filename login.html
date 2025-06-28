@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Domingos</title>
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+  <div class="auth-container">
+    <img src="img1.png" alt="Domingo's Logo" />
+    <h2>Login to Domingos</h2>
+
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+
+    <p id="msg"></p>
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBsteyLxm9SoFClujW9MJkpJnwLIYjKBnk",
+      authDomain: "copper-202bb.firebaseapp.com",
+      projectId: "copper-202bb",
+      storageBucket: "copper-202bb.firebasestorage.app",
+      messagingSenderId: "822302242587",
+      appId: "1:822302242587:web:e13a9ae9c5c4a67aee85be",
+      measurementId: "G-2N7VBD84RK"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          document.getElementById("msg").innerText = "✅ Login successful!";
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1000);
+        })
+        .catch((error) => {
+          if (error.code === "auth/user-not-found") {
+            document.getElementById("msg").innerHTML = `❌ User not found. <a href="register.html">Register here</a>`;
+          } else {
+            document.getElementById("msg").innerText = "❌ " + error.message;
+          }
+        });
+    };
+  </script>
+
+    <style>@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #004b91, #006fbf);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-container {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-container img {
+  width: 80px;
+  margin-bottom: 20px;
+}
+
+.auth-container h2 {
+  color: #004b91;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.auth-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.auth-container input:focus {
+  outline: none;
+  border-color: #007ac2;
+  box-shadow: 0 0 5px rgba(0, 122, 194, 0.4);
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007ac2;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.auth-container button:hover {
+  background-color: #004b91;
+}
+
+.auth-container p {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.auth-container a {
+  color: #007ac2;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-container a:hover {
+  text-decoration: underline;
+}
+
+#msg {
+  margin-top: 15px;
+  font-size: 14px;
+  color: red;
+}
+</style>
+
+</body>
+</html>

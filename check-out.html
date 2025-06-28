@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Checkout - Domingo's Clone</title>
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+  <div class="auth-container">
+    <img src="img1.png" alt="Domingo's Logo" />
+    <h2>Delivery & Contact Details</h2>
+
+    <!-- Web3Forms API used here :) -->
+    <form id="orderForm" method="POST" action="https://api.web3forms.com/submit">
+      <input type="hidden" name="access_key" value="481708d1-d17b-455a-a567-34ddf76a5fed" />
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Email Address" required />
+      <input type="tel" name="phone" placeholder="Phone Number" required />
+      <input type="text" name="address" placeholder="Delivery Address" required />
+      <input type="hidden" name="order_details" id="orderDetailsField" />
+      <textarea name="message" placeholder="Order Notes or Pizza Type (Optional)" rows="5"></textarea>
+      <button type="submit">Place Order</button>
+      <p id="msg" style="margin-top: 15px;"></p>
+    </form>
+  </div>
+
+  
+  <script>
+    const form = document.getElementById('orderForm');
+    const msg = document.getElementById('msg');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+    
+      const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
+
+      const orderText = cartData.map((item, index) => {
+        return `${index + 1}. ${item.name} - ${item.quantity} x $${item.price}`;
+      }).join('\n');
+
+      document.getElementById("orderDetailsField").value = orderText;
+
+      const formData = new FormData(form);
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          msg.innerText = "✅ Order received! Your pizza will arrive in 10 minutes.";
+          localStorage.removeItem("cartData");
+          form.reset();
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 3000);
+        } else {
+          msg.innerText = "❌ Something went wrong. Please try again.";
+        }
+      })
+      .catch(() => {
+        msg.innerText = "❌ Network error. Try again later.";
+      });
+    });
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #004b91, #006fbf);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-container {
+      background-color: #ffffff;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .auth-container img {
+      width: 80px;
+      margin-bottom: 20px;
+    }
+
+    .auth-container h2 {
+      color: #004b91;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .auth-container input,
+    .auth-container textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .auth-container input:focus,
+    .auth-container textarea:focus {
+      outline: none;
+      border-color: #007ac2;
+      box-shadow: 0 0 5px rgba(0, 122, 194, 0.4);
+    }
+
+    .auth-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007ac2;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .auth-container button:hover {
+      background-color: #004b91;
+    }
+
+    .auth-container p {
+      margin-top: 16px;
+      font-size: 14px;
+    }
+
+    #msg {
+      margin-top: 15px;
+      font-size: 14px;
+      color: red;
+    }
+  </style>
+</body>
+</html>
